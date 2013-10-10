@@ -41,8 +41,6 @@ function Cell(alive){
   this.set_position = function(i, j){
     this.path.position = val.position(i,j);
   };
-  this.toggle = function(){
-  }
 }
 
 //add some alive cell:
@@ -53,6 +51,22 @@ list_cel[22][21].alive = true;
 list_cel[21][22].alive = true;
 
 
+list_cel[30][30].alive = true;
+list_cel[30][31].alive = true;
+list_cel[30][32].alive = true;
+changed_cel.push(list_cel[20][20]);
+changed_cel.push(list_cel[22][20]);
+changed_cel.push(list_cel[21][21]);
+changed_cel.push(list_cel[22][21]);
+changed_cel.push(list_cel[21][22]);
+
+
+changed_cel.push(list_cel[30][30]);
+changed_cel.push(list_cel[30][31]);
+changed_cel.push(list_cel[30][32]);
+display_only_updated();
+
+
 function onFrame(event) {
   update_cells();
   display_only_updated();
@@ -60,48 +74,110 @@ function onFrame(event) {
 }
 
 function display_only_updated(){
-  for(var i = 0; i < changed_cel.length; i++) {
-    changed_cel[i].path.visible = changed_cel[i].alive;
+  while((a=changed_cel.pop()) != null){
+    //debugger;
+    a.path.visible = a.alive;
   }
 }
 
 function update_cells(){
-  changed_cel = [];
   for (var i = 0; i < list_cel.length; i++) {
     for (var j = 0; j < list_cel.length; j++) {
-      //if(list_cel[i][j].alive){
+      if(need_toggle_state(i, j)){
         list_cel[i][j].alive = !list_cel[i][j].alive;
         changed_cel.push(list_cel[i][j]);
-      //}
+      }
     }
   }
 }
 
-function onMouseUp(event) {
-  var a = cel.clone();
-  a.position = new Point(event.point);
-  a.visible = true;
-  project.activeLayer.addChild(a);
-}
-
-// print background
-//display_background(); //It slow DOWN A LOT the FPS
-function display_background(){
-  var background_cel = cel.clone();
-  background_cel.fillColor = '#fafafa';
-  background_cel.visible = true;
-
-  var background_cel_symbol = new Symbol(background_cel);
-  for (var i = 0; i < val.on_x; i++){
-    for (var j = 0; j < val.on_y; j++){
-      background_cel_symbol.place(val.position(i, j));
-    }
+function need_toggle_state(i , j){
+  if(list_cel[i][j].alive){
+    return need_toggle_alive(i, j);
+  }else{
+    return need_toggle_dead(i, j);
   }
 }
+
+function need_toggle_alive(i, j){
+  var count = count_exist_and_alive(i, j);
+
+  //Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+  //Any live cell with more than three live neighbours dies, as if by overcrowding.
+  if(count < 2 || count > 3){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+function need_toggle_dead(i, j){
+  var count = 0;
+  count = count_exist_and_alive(i, j);
+
+  //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+  if(count == 3){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+function count_exist_and_alive(i, j){
+  // NW N NE
+  // W  .  E
+  // SW S SE
+
+  var count = 0;
+  // top
+  count += exist_and_alive(i - 1, j - 1) ;
+  count += exist_and_alive(i,     j - 1) ;
+  count += exist_and_alive(i + 1, j - 1) ;
+
+  // mid
+  count += exist_and_alive(i - 1, j) ;
+  count += exist_and_alive(i + 1, j) ;
+
+  //bottom
+  count += exist_and_alive(i - 1, j + 1)   ;
+  count += exist_and_alive(i,     j + 1) ;
+  count += exist_and_alive(i + 1, j + 1) ;
+  return count;
+}
+
+function exist_and_alive(i, j){
+  if(i >= 0 && i < val.on_x &&
+     j >= 0 && j < val.on_y &&
+       list_cel[i][j].alive){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+//function onMouseUp(event) {
+//var a = cel.clone();
+//a.position = new Point(event.point);
+//a.visible = true;
+//project.activeLayer.addChild(a);
+//}
+
+//// print background
+////display_background(); //It slow DOWN A LOT the FPS
+//function display_background(){
+//var background_cel = cel.clone();
+//background_cel.fillColor = '#fafafa';
+//background_cel.visible = true;
+
+//var background_cel_symbol = new Symbol(background_cel);
+//for (var i = 0; i < val.on_x; i++){
+//for (var j = 0; j < val.on_y; j++){
+//background_cel_symbol.place(val.position(i, j));
+//}
+//}
+//}
 
 var display_fps = new PointText(new Point(view.size.width - 80, 30));
-//display_fps.justification = 'center';
 display_fps.fillColor = 'black';
 display_fps.content   = '25 fps';
 display_fps.fontSize  = 25;
-
