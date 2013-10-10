@@ -22,7 +22,7 @@ cel.visible = false;
 
 var list_cel = null;
 var invert_state = [];
-//init all dead cell
+//init all cell to dead
 init_cell();
 function init_cell(){
   list_cel = new Array(val.on_x);
@@ -81,7 +81,7 @@ function toggle_cells(){
     a.alive = !a.alive;
     a.path.visible = a.alive;
   }
-debugger;
+  debugger;
 }
 
 function update_cells(){
@@ -165,20 +165,20 @@ function exist_and_alive(i, j){
 //project.activeLayer.addChild(a);
 //}
 
-//// print background
-////display_background(); //It slow DOWN A LOT the FPS
-//function display_background(){
-//var background_cel = cel.clone();
-//background_cel.fillColor = '#fafafa';
-//background_cel.visible = true;
+// print background
+//display_background(); //It slow DOWN A LOT the FPS
+function display_background(){
+  var background_cel = cel.clone();
+  background_cel.fillColor = '#fafafa';
+  background_cel.visible = true;
 
-//var background_cel_symbol = new Symbol(background_cel);
-//for (var i = 0; i < val.on_x; i++){
-//for (var j = 0; j < val.on_y; j++){
-//background_cel_symbol.place(val.position(i, j));
-//}
-//}
-//}
+  var background_cel_symbol = new Symbol(background_cel);
+  for (var i = 0; i < val.on_x; i++){
+    for (var j = 0; j < val.on_y; j++){
+      background_cel_symbol.place(val.position(i, j));
+    }
+  }
+}
 
 var display_fps = new PointText(new Point(view.size.width - 80, 30));
 display_fps.fillColor = 'black';
