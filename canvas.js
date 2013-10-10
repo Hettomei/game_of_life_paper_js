@@ -21,7 +21,7 @@ cel.fillColor = '#000';
 cel.visible = false;
 
 var list_cel = null;
-var changed_cel = [];
+var invert_state = [];
 //init all dead cell
 init_cell();
 function init_cell(){
@@ -43,49 +43,52 @@ function Cell(alive){
   };
 }
 
-//add some alive cell:
-list_cel[20][20].alive = true;
-list_cel[22][20].alive = true;
-list_cel[21][21].alive = true;
-list_cel[22][21].alive = true;
-list_cel[21][22].alive = true;
+function create_glider(){
+  invert_state.push(list_cel[20][20]);
+  invert_state.push(list_cel[22][20]);
+  invert_state.push(list_cel[21][21]);
+  invert_state.push(list_cel[22][21]);
+  invert_state.push(list_cel[21][22]);
+}
 
+function create_oscillo(){
+  invert_state.push(list_cel[10][20]);
+  invert_state.push(list_cel[10][21]);
+  invert_state.push(list_cel[10][22]);
+}
 
-list_cel[30][30].alive = true;
-list_cel[30][31].alive = true;
-list_cel[30][32].alive = true;
-changed_cel.push(list_cel[20][20]);
-changed_cel.push(list_cel[22][20]);
-changed_cel.push(list_cel[21][21]);
-changed_cel.push(list_cel[22][21]);
-changed_cel.push(list_cel[21][22]);
+function create_acorn(){
+  invert_state.push(list_cel[20][20]);
+  invert_state.push(list_cel[21][20]);
+  invert_state.push(list_cel[21][18]);
+  invert_state.push(list_cel[23][19]);
+  invert_state.push(list_cel[24][20]);
+  invert_state.push(list_cel[25][20]);
+  invert_state.push(list_cel[26][20]);
+}
 
-
-changed_cel.push(list_cel[30][30]);
-changed_cel.push(list_cel[30][31]);
-changed_cel.push(list_cel[30][32]);
-display_only_updated();
-
+create_acorn();
+toggle_cells();
 
 function onFrame(event) {
   update_cells();
-  display_only_updated();
+  toggle_cells();
   display_fps.content = (1/event.delta) + " fps";
 }
 
-function display_only_updated(){
-  while((a=changed_cel.pop()) != null){
-    //debugger;
+function toggle_cells(){
+  while(a=invert_state.pop()){
+    a.alive = !a.alive;
     a.path.visible = a.alive;
   }
+debugger;
 }
 
 function update_cells(){
   for (var i = 0; i < list_cel.length; i++) {
     for (var j = 0; j < list_cel.length; j++) {
       if(need_toggle_state(i, j)){
-        list_cel[i][j].alive = !list_cel[i][j].alive;
-        changed_cel.push(list_cel[i][j]);
+        invert_state.push(list_cel[i][j]);
       }
     }
   }
