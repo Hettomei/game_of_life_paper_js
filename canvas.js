@@ -17,9 +17,10 @@ display_fps.fillColor = 'black';
 display_fps.fontSize  = 25;
 
 create_glider(new Point(10, 25));
-create_acorn(new Point(10, 10));
-create_oscillo(new Point(0, 0));
-create_oscillo(new Point(val.on_x-5, val.on_y-5));
+create_acorn(new Point(20, 20));
+create_oscillo(new Point(5, 5));
+//create_oscillo(new Point(val.on_x-5, val.on_y-5));
+generate_interesting_cell();
 toggle_cells();
 
 function Val(){
@@ -88,6 +89,8 @@ function update_cells(){
 }
 
 function toggle_cells(){
+  //optimisation : this while
+  //works better than "for i = 0 ..."
   while(a=invert_state.pop()){
     a.alive = !a.alive;
     a.path.visible = a.alive;
