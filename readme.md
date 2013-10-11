@@ -37,7 +37,17 @@ The changed state goes in "invert_state", and then we display all.
 
 Very quick benchmark:
 
-for size = 10, FPS ~= 7.5;
+with
+```javascript
+function Val(){
+  this.canvas_x = 1000;
+  this.canvas_y = 600;
+
+  this.size = 10;
+  this.space = 2;
+}
+// => FPS ~= 7.5;
+```
 
 
 MIT License
