@@ -43,34 +43,59 @@ function Cell(alive){
   };
 }
 
-function create_glider(){
-  invert_state.push(list_cel[20][20]);
-  invert_state.push(list_cel[22][20]);
-  invert_state.push(list_cel[21][21]);
-  invert_state.push(list_cel[22][21]);
-  invert_state.push(list_cel[21][22]);
+function create_glider(start_point){
+  //   .
+  // . .
+  //  ..
+  var path = [];
+  path.push(new Point(0, 0));
+  path.push(new Point(0, 1));
+  path.push(new Point(0, 2));
+  path.push(new Point(-1, 2));
+  path.push(new Point(-2, 1));
+  make_alive_celle_from_path(start_point, path);
 }
 
-function create_oscillo(){
-  invert_state.push(list_cel[10][20]);
-  invert_state.push(list_cel[10][21]);
-  invert_state.push(list_cel[10][22]);
+function create_oscillo(start_point){
+  // ...
+  var path = [];
+  path.push(new Point(0, 0));
+  path.push(new Point(1, 0));
+  path.push(new Point(2, 0));
+  make_alive_celle_from_path(start_point, path);
 }
 
-function create_acorn(){
-  invert_state.push(list_cel[20][20]);
-  invert_state.push(list_cel[21][20]);
-  invert_state.push(list_cel[21][18]);
-  invert_state.push(list_cel[23][19]);
-  invert_state.push(list_cel[24][20]);
-  invert_state.push(list_cel[25][20]);
-  invert_state.push(list_cel[26][20]);
+function create_acorn(start_point){
+  // .
+  //   .
+  //..  ...
+  var path = [];
+  path.push(new Point(0, 0));
+  path.push(new Point(1, 0));
+  path.push(new Point(1, -2));
+  path.push(new Point(3, -1));
+  path.push(new Point(4, 0));
+  path.push(new Point(5, 0));
+  path.push(new Point(6, 0));
+  make_alive_celle_from_path(start_point, path);
 }
 
-create_acorn();
+function make_alive_celle_from_path(start_point, path){
+  for(var i=0; i < path.length; i++){
+  debugger;
+    invert_state.push(
+      list_cel[start_point.x+path[i].x][start_point.y+path[i].y]
+    );
+  }
+}
+
+create_glider(new Point(10, 25));
+create_acorn(new Point(10, 10));
+create_oscillo(new Point(30, 30));
 toggle_cells();
 
 function onFrame(event) {
+  //debugger;
   update_cells();
   toggle_cells();
   display_fps.content = (1/event.delta) + " fps";
@@ -81,7 +106,6 @@ function toggle_cells(){
     a.alive = !a.alive;
     a.path.visible = a.alive;
   }
-  debugger;
 }
 
 function update_cells(){
