@@ -1,3 +1,27 @@
+var val = new Val();
+val.init_number_cells(); // because I don't know how to directly set these val
+view.viewSize =  new Size(val.canvas_x, val.canvas_y);
+
+//what a cell looks like
+var cel = new Path.Rectangle(new Point(0, 0), new Size(val.size, val.size));
+cel.fillColor = '#000';
+cel.visible = false;
+
+var list_cel = null;
+var invert_state = [];
+//init all cell to dead
+init_cell();
+
+var display_fps = new PointText(new Point(view.size.width - 80, 30));
+display_fps.fillColor = 'black';
+display_fps.fontSize  = 25;
+
+create_glider(new Point(10, 25));
+create_acorn(new Point(10, 10));
+create_oscillo(new Point(0, 0));
+create_oscillo(new Point(val.on_x-5, val.on_y-5));
+toggle_cells();
+
 function Val(){
   this.canvas_x = 1000;
   this.canvas_y = 600;
@@ -22,19 +46,14 @@ function Val(){
   };
 }
 
-var val = new Val();
-val.init_number_cells(); // because I don't know how to directly set these val
-view.viewSize =  new Size(val.canvas_x, val.canvas_y);
+function Cell(alive){
+  this.alive = alive; // bool
+  this.path = cel.clone();
+  this.set_position = function(i, j){
+    this.path.position = val.position(i,j);
+  };
+}
 
-//what a cell looks like
-var cel = new Path.Rectangle(new Point(0, 0), new Size(val.size, val.size));
-cel.fillColor = '#000';
-cel.visible = false;
-
-var list_cel = null;
-var invert_state = [];
-//init all cell to dead
-init_cell();
 function init_cell(){
   list_cel = new Array(val.on_x);
   for (var i = 0; i < list_cel.length; i++) {
@@ -46,76 +65,10 @@ function init_cell(){
   }
 }
 
-function Cell(alive){
-  this.alive = alive; // bool
-  this.path = cel.clone();
-  this.set_position = function(i, j){
-    this.path.position = val.position(i,j);
-  };
-}
-
-function create_glider(start_point){
-  //   .
-  // . .
-  //  ..
-  var path = [];
-  path.push(new Point(0, 0));
-  path.push(new Point(0, 1));
-  path.push(new Point(0, 2));
-  path.push(new Point(-1, 2));
-  path.push(new Point(-2, 1));
-  make_alive_celle_from_path(start_point, path);
-}
-
-function create_oscillo(start_point){
-  // ...
-  var path = [];
-  path.push(new Point(0, 0));
-  path.push(new Point(1, 0));
-  path.push(new Point(2, 0));
-  make_alive_celle_from_path(start_point, path);
-}
-
-function create_acorn(start_point){
-  // .
-  //   .
-  //..  ...
-  var path = [];
-  path.push(new Point(0, 0));
-  path.push(new Point(1, 0));
-  path.push(new Point(1, -2));
-  path.push(new Point(3, -1));
-  path.push(new Point(4, 0));
-  path.push(new Point(5, 0));
-  path.push(new Point(6, 0));
-  make_alive_celle_from_path(start_point, path);
-}
-
-function make_alive_celle_from_path(start_point, path){
-  for(var i=0; i < path.length; i++){
-    invert_state.push(
-      list_cel[start_point.x+path[i].x][start_point.y+path[i].y]
-    );
-  }
-}
-
-create_glider(new Point(10, 25));
-create_acorn(new Point(10, 10));
-//create_oscillo(new Point(30, 30));
-create_oscillo(new Point(val.on_x-5, val.on_y-5));
-toggle_cells();
-
 function onFrame(event) {
   update_cells();
   toggle_cells();
   display_fps.content = (1/event.delta) + " fps";
-}
-
-function toggle_cells(){
-  while(a=invert_state.pop()){
-    a.alive = !a.alive;
-    a.path.visible = a.alive;
-  }
 }
 
 function update_cells(){
@@ -125,6 +78,13 @@ function update_cells(){
         invert_state.push(list_cel[i][j]);
       }
     }
+  }
+}
+
+function toggle_cells(){
+  while(a=invert_state.pop()){
+    a.alive = !a.alive;
+    a.path.visible = a.alive;
   }
 }
 
@@ -149,8 +109,7 @@ function need_toggle_alive(i, j){
 }
 
 function need_toggle_dead(i, j){
-  var count = 0;
-  count = count_exist_and_alive(i, j);
+  var count = count_exist_and_alive(i, j);
 
   //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
   if(count == 3){
@@ -192,15 +151,55 @@ function exist_and_alive(i, j){
   }
 }
 
-//function onMouseUp(event) {
-//var a = cel.clone();
-//a.position = new Point(event.point);
-//a.visible = true;
-//project.activeLayer.addChild(a);
-//}
+function create_glider(start_point){
+  //   .
+  // . .
+  //  ..
+  var path = [];
+  path.push(new Point(0, 0));
+  path.push(new Point(0, 1));
+  path.push(new Point(0, 2));
+  path.push(new Point(-1, 2));
+  path.push(new Point(-2, 1));
+  make_alive_celle_from_path(start_point, path);
+}
+
+function create_oscillo(start_point){
+  // ...
+  var path = [];
+  path.push(new Point(0, 0));
+  path.push(new Point(1, 0));
+  path.push(new Point(2, 0));
+  make_alive_celle_from_path(start_point, path);
+}
+
+function create_acorn(start_point){
+  // .
+  //   .
+  //..  ...
+  var path = [
+    new Point(0,  0),
+    new Point(1,  0),
+    new Point(1, -2),
+    new Point(3, -1),
+    new Point(4,  0),
+    new Point(5,  0),
+    new Point(6,  0)
+  ];
+  make_alive_celle_from_path(start_point, path);
+}
+
+function make_alive_celle_from_path(start_point, path){
+  for(var i=0; i < path.length; i++){
+    invert_state.push(
+      list_cel[start_point.x+path[i].x][start_point.y+path[i].y]
+    );
+  }
+}
 
 // print background
-//display_background(); //It slow DOWN A LOT the FPS
+// display_background(); //It slow DOWN A LOT the FPS
+// need to do another way
 function display_background(){
   var background_cel = cel.clone();
   background_cel.fillColor = '#fafafa';
@@ -213,8 +212,3 @@ function display_background(){
     }
   }
 }
-
-var display_fps = new PointText(new Point(view.size.width - 80, 30));
-display_fps.fillColor = 'black';
-display_fps.content   = '25 fps';
-display_fps.fontSize  = 25;
