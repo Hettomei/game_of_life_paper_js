@@ -1,22 +1,32 @@
+function Val(){
+  this.canvas_x = 1000;
+  this.canvas_y = 600;
 
-var val = {
-  size: 2, // size of cells
-  space: 2, // space between cells
-  canvas_x: 1000,
-  canvas_y: 600,
-  on_x: function(){ return Math.floor(this.canvas_x / (this.size + this.space))}, // number per lines
-  on_y: function(){ return Math.floor(this.canvas_y / (this.size + this.space))}, // number per columns
-  position: function(i, j){
+  this.size = 15; // size of cells
+  this.space = 2; // space between cells
+
+  this.on_x = 0; // number per lines
+  this.on_y = 0; // number per columns
+
+  //because I don't know how to save this value on object constructor
+  this.init_number_cells = function(){
+    this.on_x = Math.floor(this.canvas_x / (this.size + this.space));
+    this.on_y = Math.floor(this.canvas_y / (this.size + this.space));
+  };
+
+  this.position = function(i, j){
     return new Point(
       i*(this.size+this.space),
       j*(this.size+this.space)
-    )
-  },
+    );
+  };
 }
 
+var val = new Val();
+val.init_number_cells(); // because I don't know how to directly set these val
 view.viewSize =  new Size(val.canvas_x, val.canvas_y);
 
-// what a cell looks like
+//what a cell looks like
 var cel = new Path.Rectangle(new Point(0, 0), new Size(val.size, val.size));
 cel.fillColor = '#000';
 cel.visible = false;
@@ -26,9 +36,9 @@ var invert_state = [];
 //init all cell to dead
 init_cell();
 function init_cell(){
-  list_cel = new Array(val.on_x());
+  list_cel = new Array(val.on_x);
   for (var i = 0; i < list_cel.length; i++) {
-    list_cel[i] = new Array(val.on_y());
+    list_cel[i] = new Array(val.on_y);
     for (var j = 0; j < list_cel.length; j++) {
       list_cel[i][j] = new Cell(false);
       list_cel[i][j].set_position(i, j);
@@ -92,7 +102,7 @@ function make_alive_celle_from_path(start_point, path){
 create_glider(new Point(10, 25));
 create_acorn(new Point(10, 10));
 //create_oscillo(new Point(30, 30));
-create_oscillo(new Point(val.on_x()-5, val.on_y()-5));
+create_oscillo(new Point(val.on_x-5, val.on_y-5));
 toggle_cells();
 
 function onFrame(event) {
@@ -173,8 +183,8 @@ function count_exist_and_alive(i, j){
 }
 
 function exist_and_alive(i, j){
-  if(i >= 0 && i < val.on_x() &&
-     j >= 0 && j < val.on_y() &&
+  if(i >= 0 && i < val.on_x &&
+     j >= 0 && j < val.on_y &&
        list_cel[i][j].alive){
     return 1;
   }else{
@@ -197,8 +207,8 @@ function display_background(){
   background_cel.visible = true;
 
   var background_cel_symbol = new Symbol(background_cel);
-  for (var i = 0; i < val.on_x(); i++){
-    for (var j = 0; j < val.on_y(); j++){
+  for (var i = 0; i < val.on_x; i++){
+    for (var j = 0; j < val.on_y; j++){
       background_cel_symbol.place(val.position(i, j));
     }
   }
