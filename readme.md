@@ -33,6 +33,12 @@ All cells are saved in "list_cel"
 every frame, we loop on list_cell and look for future changed state.
 The changed state goes in "invert_state", and then we display all.
 
+##Benchmark
+
+Very quick benchmark:
+
+for size = 10, FPS ~= 7.5;
+
 
 MIT License
 

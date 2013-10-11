@@ -2,7 +2,7 @@ function Val(){
   this.canvas_x = 1000;
   this.canvas_y = 600;
 
-  this.size = 15; // size of cells
+  this.size = 10; // size of cells
   this.space = 2; // space between cells
 
   this.on_x = 0; // number per lines
