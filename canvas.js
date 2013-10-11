@@ -7,7 +7,7 @@ var cel = new Path.Rectangle(new Point(0, 0), new Size(val.size, val.size));
 cel.fillColor = '#000';
 cel.visible = false;
 
-var list_cel = null;
+var list_cell = null;
 var invert_state = [];
 //init all cell to dead
 init_cell();
@@ -55,12 +55,14 @@ function Cell(alive){
 }
 
 function init_cell(){
-  list_cel = new Array(val.on_x);
-  for (var i = 0; i < list_cel.length; i++) {
-    list_cel[i] = new Array(val.on_y);
-    for (var j = 0; j < list_cel.length; j++) {
-      list_cel[i][j] = new Cell(false);
-      list_cel[i][j].set_position(i, j);
+  var on_x = val.on_x;
+  var on_y = val.on_y;
+  list_cell = new Array(val.on_x);
+  for (var i = 0; i < on_x; i++) {
+    list_cell[i] = new Array(val.on_y);
+    for (var j = 0; j < on_y; j++) {
+      list_cell[i][j] = new Cell(false);
+      list_cell[i][j].set_position(i, j);
     }
   }
 }
@@ -72,10 +74,14 @@ function onFrame(event) {
 }
 
 function update_cells(){
-  for (var i = 0; i < list_cel.length; i++) {
-    for (var j = 0; j < list_cel.length; j++) {
+  //this speed up, and gain 3 FPS !
+  var on_x = val.on_x;
+  var on_y = val.on_y;
+
+  for (var i = 0; i < on_x ; i++) {
+    for (var j = 0; j < on_y ; j++) {
       if(need_toggle_state(i, j)){
-        invert_state.push(list_cel[i][j]);
+        invert_state.push(list_cell[i][j]);
       }
     }
   }
@@ -89,7 +95,7 @@ function toggle_cells(){
 }
 
 function need_toggle_state(i , j){
-  if(list_cel[i][j].alive){
+  if(list_cell[i][j].alive){
     return need_toggle_alive(i, j);
   }else{
     return need_toggle_dead(i, j);
@@ -144,7 +150,7 @@ function count_exist_and_alive(i, j){
 function exist_and_alive(i, j){
   if(i >= 0 && i < val.on_x &&
      j >= 0 && j < val.on_y &&
-       list_cel[i][j].alive){
+       list_cell[i][j].alive){
     return 1;
   }else{
     return 0;
@@ -192,7 +198,7 @@ function create_acorn(start_point){
 function make_alive_celle_from_path(start_point, path){
   for(var i=0; i < path.length; i++){
     invert_state.push(
-      list_cel[start_point.x+path[i].x][start_point.y+path[i].y]
+      list_cell[start_point.x+path[i].x][start_point.y+path[i].y]
     );
   }
 }

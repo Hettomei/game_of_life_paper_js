@@ -46,7 +46,7 @@ function Val(){
   this.size = 10;
   this.space = 2;
 }
-// => FPS ~= 7.5;
+// => FPS ~= 11.5;
 ```
 
 
