@@ -8,6 +8,7 @@ cel.fillColor = '#000';
 cel.visible = false;
 
 var list_cell = null;
+var cell_to_check = [];
 var invert_state = [];
 //init all cell to dead
 init_cell();
@@ -20,8 +21,8 @@ create_glider(new Point(10, 25));
 create_acorn(new Point(20, 20));
 create_oscillo(new Point(5, 5));
 //create_oscillo(new Point(val.on_x-5, val.on_y-5));
-generate_interesting_cell();
 toggle_cells();
+generate_interesting_cell();
 
 function Val(){
   this.canvas_x = 1000;
@@ -65,6 +66,39 @@ function init_cell(){
       list_cell[i][j] = new Cell(false);
       list_cell[i][j].set_position(i, j);
     }
+  }
+}
+
+function generate_interesting_cell(){
+  var on_x = val.on_x;
+  var on_y = val.on_y;
+  cell_to_check.length = 0;
+  for (var i = 0; i < on_x; i++) {
+    for (var j = 0; j < on_y; j++) {
+      if(list_cell[i][j].alive){
+        //up
+        push_neighboor_to_check(i-1, j-1);
+        push_neighboor_to_check(i  , j-1);
+        push_neighboor_to_check(i+1, j-1);
+
+        //middle
+        push_neighboor_to_check(i-1, j);
+        push_neighboor_to_check(i  , j);
+        push_neighboor_to_check(i+1, j);
+
+        //bottom
+        push_neighboor_to_check(i-1, j+1);
+        push_neighboor_to_check(i  , j+1);
+        push_neighboor_to_check(i+1, j+1);
+      }
+    }
+  }
+}
+
+function push_neighboor_to_check(i, j){
+  if(i >= 0 && i < val.on_x &&
+     j >= 0 && j < val.on_y){
+    cell_to_check.push(list_cell[i][j]);
   }
 }
 
